@@ -8,9 +8,10 @@ BACKRED='\033[41m'
 BACKGREEN='\033[102m'
 
 PASSEDCOUNTER=0
-TESTNUM=8
+TESTNUM=0
 
 assert_exec() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -32,6 +33,7 @@ assert_exec() {
 }
 
 assert_args() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -51,6 +53,7 @@ assert_args() {
 }
 
 assert_pipe() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -72,6 +75,7 @@ assert_pipe() {
 }
 
 assert_multipipe() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -92,7 +96,51 @@ assert_multipipe() {
     ((PASSEDCOUNTER++))
 }
 
+assert_multipipe_sleep() {
+    ((TESTNUM++))
+    input="$1"
+    expected="$2"
+
+    cmd="./sample_sleep"
+
+    expect -c "
+        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        expect \"shellman$ \"
+        send \"${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd}\n\"
+        expect \"\"
+        send \"${input}\n\"
+        expect \"${expected}\"
+        exit
+    "
+
+    echo
+    echo -e "${GREEN}assert_multipipe_sleep() OK${NC}"
+    ((PASSEDCOUNTER++))
+}
+
 assert_leftredirect() {
+    ((TESTNUM++))
+    input="$1"
+    expected="$2"
+
+    cmd="./sample"
+    filepath="./sample_in.txt"
+
+    expect -c "
+        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        expect \"shellman$ \"
+        send \"${cmd} < ${filepath}\n\"
+        expect \"${expected}\"
+        exit
+    "
+
+    echo
+    echo -e "${GREEN}assert_leftredirect() OK${NC}"
+    ((PASSEDCOUNTER++))
+}
+
+assert_leftredirect() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -113,6 +161,7 @@ assert_leftredirect() {
 }
 
 assert_rightredirect() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -133,16 +182,17 @@ assert_rightredirect() {
 
     if [ "$output" = "$expected" ]; then
         echo
-        echo -e "${GREEN}assert_leftredirect() OK ${input} => ${output} ${NC}"
+        echo -e "${GREEN}assert_rightredirect() OK ${input} => ${output} ${NC}"
         ((PASSEDCOUNTER++))
 
     else
         echo
-        echo -e "${RED}assert_leftredirect() OK $input => $expected expected, but got $output ${NC}"
+        echo -e "${RED}assert_rightredirect() OK $input => $expected expected, but got $output ${NC}"
     fi
 }
 
 assert_pipeandrightredirect() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -172,6 +222,7 @@ assert_pipeandrightredirect() {
 }
 
 assert_rightredirectandleftredirect() {
+    ((TESTNUM++))
     input="$1"
     expected="$2"
 
@@ -199,10 +250,12 @@ assert_rightredirectandleftredirect() {
     fi
 }
 
+
 assert_exec 5 10
 assert_args 3 6
 assert_pipe 10 40
 assert_multipipe 2 512
+assert_multipipe_sleep 3 768
 assert_leftredirect 7 14
 assert_rightredirect 8 16
 assert_pipeandrightredirect 8 512
