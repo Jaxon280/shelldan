@@ -10,15 +10,18 @@ BACKGREEN='\033[102m'
 PASSEDCOUNTER=0
 TESTNUM=0
 
+program="/Users/keresu0720/environment/Sandbox-Class/shell-kadai/shellman"
+dir="./sample_programs"
+
 assert_exec() {
     ((TESTNUM++))
     input="$1"
     expected="$2"
 
-    cmd="./sample"
+    cmd="${dir}/sample"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd}\n\"
         expect \"\"
@@ -37,10 +40,10 @@ assert_args() {
     input="$1"
     expected="$2"
 
-    cmd="./sample_args"
+    cmd="${dir}/sample_args"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} ${input}\n\"
         expect \"${expected}\"
@@ -57,10 +60,10 @@ assert_pipe() {
     input="$1"
     expected="$2"
 
-    cmd="./sample"
+    cmd="${dir}/sample"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} | ${cmd}\n\"
         expect \"\"
@@ -79,10 +82,10 @@ assert_multipipe() {
     input="$1"
     expected="$2"
 
-    cmd="./sample"
+    cmd="${dir}/sample"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd}\n\"
         expect \"\"
@@ -96,59 +99,16 @@ assert_multipipe() {
     ((PASSEDCOUNTER++))
 }
 
-assert_multipipe_sleep() {
-    ((TESTNUM++))
-    input="$1"
-    expected="$2"
-
-    cmd="./sample_sleep"
-
-    expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
-        expect \"shellman$ \"
-        send \"${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd}\n\"
-        expect \"\"
-        send \"${input}\n\"
-        expect \"${expected}\"
-        exit
-    "
-
-    echo
-    echo -e "${GREEN}assert_multipipe_sleep() OK${NC}"
-    ((PASSEDCOUNTER++))
-}
-
 assert_leftredirect() {
     ((TESTNUM++))
     input="$1"
     expected="$2"
 
-    cmd="./sample"
-    filepath="./sample_in.txt"
+    cmd="${dir}/sample"
+    filepath="${dir}/sample_in.txt"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
-        expect \"shellman$ \"
-        send \"${cmd} < ${filepath}\n\"
-        expect \"${expected}\"
-        exit
-    "
-
-    echo
-    echo -e "${GREEN}assert_leftredirect() OK${NC}"
-    ((PASSEDCOUNTER++))
-}
-
-assert_leftredirect() {
-    ((TESTNUM++))
-    input="$1"
-    expected="$2"
-
-    cmd="./sample"
-    filepath="./sample_in.txt"
-
-    expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} < ${filepath}\n\"
         expect \"${expected}\"
@@ -165,11 +125,11 @@ assert_rightredirect() {
     input="$1"
     expected="$2"
 
-    cmd="./sample"
-    filepath="./sample_out.txt"
+    cmd="${dir}/sample"
+    filepath="${dir}/sample_out.txt"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} > ${filepath}\n\"
         expect \"\"
@@ -178,7 +138,7 @@ assert_rightredirect() {
         exit
     "
 
-    output=`cat ./sample_out.txt`
+    output=`cat ${dir}/sample_out.txt`
 
     if [ "$output" = "$expected" ]; then
         echo
@@ -196,11 +156,11 @@ assert_pipeandrightredirect() {
     input="$1"
     expected="$2"
 
-    cmd="./sample"
-    filepath="./sample_out.txt"
+    cmd="${dir}/sample"
+    filepath="${dir}/sample_out.txt"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} | ${cmd} > ${filepath}\n\"
         expect \"\"
@@ -209,7 +169,7 @@ assert_pipeandrightredirect() {
         exit
     "
 
-    output=`cat ./sample_out.txt`
+    output=`cat ${dir}/sample_out.txt`
 
     if [ "$output" = "$expected" ]; then
         echo
@@ -226,19 +186,19 @@ assert_rightredirectandleftredirect() {
     input="$1"
     expected="$2"
 
-    cmd="./sample"
-    in_filepath="./sample_in.txt"
-    out_filepath="./sample_out.txt"
+    cmd="${dir}/sample"
+    in_filepath="${dir}/sample_in.txt"
+    out_filepath="${dir}/sample_out.txt"
 
     expect -c "
-        spawn env /Users/keresu0720/environment/Sandbox-Class/c-kadai/kadai-39/main
+        spawn env ${program}
         expect \"shellman$ \"
         send \"${cmd} < ${in_filepath} > ${out_filepath}\n\"
         expect \"shellman$ \"
         exit
     "
 
-    output=`cat ./sample_out.txt`
+    output=`cat ${dir}/sample_out.txt`
 
     if [ "$output" = "$expected" ]; then
         echo
@@ -251,11 +211,11 @@ assert_rightredirectandleftredirect() {
 }
 
 
+
 assert_exec 5 10
 assert_args 3 6
 assert_pipe 10 40
 assert_multipipe 2 512
-assert_multipipe_sleep 3 768
 assert_leftredirect 7 14
 assert_rightredirect 8 16
 assert_pipeandrightredirect 8 512
